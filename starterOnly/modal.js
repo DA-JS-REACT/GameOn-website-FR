@@ -47,51 +47,61 @@ const form = {
 
     let formElement = document.querySelector('.modal-body form');
     // console.log(formElement);
-    formElement = document.addEventListener('submit', form.handleSubmit);
+    formElement.addEventListener('submit', form.handleSubmit);
   },
 
   handleSubmit: function(event) {
 
-    let itsOk = true;
-    console.log(itsOk);
 
-    if (itsOk = false) {
-      event.preventDefault();
+    form.checkfield();
+
+    for (let attrError of formData){
+      if(attrError.getAttribute('data-error')){
+        event.preventDefault();
+      }else {
+       console.log('success');
+      }
     }
 
 
-    let AllFormElement = event.currentTarget;
-    // console.log(AllFormElement);
+  },
+
+  checkfield: function(){
 
     // champ prénom
-    // let firstName = AllFormElement.getElementById('first');
-    // let newFirstName = firstName.value;
-    // console.log(newFirstName);
-
+    form.checkfieldInputText('first', ' Veuillez entrer 2 caractères ou plus pour le champ du prenom.', 2);
     // champ nom
-    let lastName = AllFormElement.getElementById('last');
-    let newLastName = lastName.value;
-    console.log(newLastName);
-
-    if(!form.checkfieldInputText('first', ' nope', 2)){
-      itsOk = false;
-    }
-
+    form.checkfieldInputText('last', ' Veuillez entrer 2 caractères ou plus pour le champ du nom.', 2);
     // champ email
-    let email = AllFormElement.getElementById('email');
-    let newEmail = email.value;
-    console.log(newEmail);
-
+    form.checkfieldInputEmail('email',' merci de rensiegner une addresse mail valide');
     // champ birthdate
-    let birthdate = AllFormElement.getElementById('birthdate');
-    let newBirthdate = birthdate.value;
-    console.log(newBirthdate);
-
+    form.checkfieldInputBirthdate('birthdate', 'merci de renseigner votre date de naissance');
     // champ quantity
-    let quantity = AllFormElement.getElementById('quantity');
-    let newQuantity = quantity.value;
-    console.log(newQuantity);
+    form.checkfieldInputNumber('quantity', "merci de renseigner un nombre positif");
+    // champ tournoi
+    form.checkfieldInputRadio('input[type=radio]','Vous devez coché un tournoi');
 
+    form.checkfieldInputCheckbox('checkbox1', 'vous devez acceptez les conditions d\'utilisation');
+
+  },
+
+
+
+  checkNotEmpty : function(inputElement,texterror)
+  {
+     // on récupère sa valeur
+    const checkfieldValue = inputElement.value.trim();
+    // on remonte au parent afin d'afficher le message d'erreur
+    const divElement = inputElement.closest('.formData');
+
+    // on vérifie si le champ n'est pas vide et il contient 2 caractères
+    if (checkfieldValue == ''){
+      divElement.setAttribute('data-error',texterror);
+      divElement.setAttribute('data-error-visible',true);
+    }else {
+      divElement.removeAttribute('data-error');
+      divElement.removeAttribute('data-error-visible');
+    }
   },
 
   checkfieldInputText: function(fieldId,texterror , minlenght)
@@ -101,16 +111,151 @@ const form = {
 
     // on récupère sa valeur
     const inputValue = inputElement.value.trim();
-    console.log(inputValue);
+    // console.log(inputValue);
 
     // on vérifie que cette valeur est correct
     const inputLength = inputValue.length;
-    console.log(inputLength);
+    // console.log(inputLength);
 
-    if (inputLength < minlenght){
-      inputElement.classList.add('data-error');
-      console.log(texterror);
+    // on remonte au parent afin d'afficher le message d'erreur
+    const divElement = inputElement.closest('.formData');
+
+    // on vérifie si le champ n'est pas vide et il contient 2 caractères
+    if (inputLength < minlenght || inputValue == ''){
+      divElement.setAttribute('data-error',texterror);
+      divElement.setAttribute('data-error-visible',true);
+    }else {
+      divElement.removeAttribute('data-error');
+      divElement.removeAttribute('data-error-visible');
     }
+
+  },
+
+  checkfieldInputEmail: function(fieldId,texterror)
+  {
+    // on récupère l'élément  qui nous interesse
+    const inputElement = document.getElementById(fieldId);
+
+    // on récupère sa valeur
+    const inputValue = inputElement.value.trim();
+    // console.log(inputValue);
+
+    // on remonte au parent afin d'afficher le message d'erreur
+    const divElement = inputElement.closest('.formData');
+
+    let pattern = /^[a-z0-9.-]{2,}@+[a-z0-9.-]{2,}$/;
+    if (!pattern.test(inputValue )){
+      divElement.setAttribute('data-error',texterror);
+      divElement.setAttribute('data-error-visible',true);
+    }else {
+      divElement.removeAttribute('data-error');
+      divElement.removeAttribute('data-error-visible');
+    }
+
+  },
+
+  checkfieldInputBirthdate : function(fieldId,texterror)
+  {
+     // on récupère l'élément  qui nous interesse
+     const inputElement = document.getElementById(fieldId);
+
+     form.checkNotEmpty(inputElement,texterror);
+  },
+
+  checkfieldInputNumber :function(fieldId,texterror)
+  {
+     // on récupère l'élément  qui nous interesse
+     const inputElement = document.getElementById(fieldId);
+
+     // on récupère sa valeur
+     const inputValue = parseInt( inputElement.value);
+     //console.log(inputValue);
+
+     // on remonte au parent afin d'afficher le message d'erreur
+     const divElement = inputElement.closest('.formData');
+
+     // on vérifie si le champ n'est pas vide et il contient 2 caractères
+     if ( inputValue < 0 || isNaN(inputValue)){
+       divElement.setAttribute('data-error',texterror);
+       divElement.setAttribute('data-error-visible',true);
+
+     }else {
+       divElement.removeAttribute('data-error');
+       divElement.removeAttribute('data-error-visible');
+
+     }
+
+  },
+
+  checkfieldInputRadio: function(fieldType, texterror)
+  {
+      let radioElement = document.querySelectorAll(fieldType);
+      console.log(radioElement.length);
+      // const divElement = element.closest('.formData');
+      // let count = 0;
+      // for(let i = 0; i < radioElement.length; i++){
+      //   if(radioElement[i].checked){
+      //     count++;
+      //     return count;
+      //   }
+
+      //   //   if( count == 0){
+      //   //     divElement.setAttribute('data-error',texterror);
+      //   //     divElement.setAttribute('data-error-visible',true);
+      //   //   }else {
+      //   //     divElement.removeAttribute('data-error');
+      //   //     divElement.removeAttribute('data-error-visible');
+
+      //   //     console.log('div',divElement);
+      //   // }
+      // }
+
+      for( const element of radioElement){
+        // console.log('radio',element.checked);
+        const divElement = element.closest('.formData');
+        element.addEventListener('click', function(e){
+          console.log(e.currentTarget.checked);
+          
+          if(!e.target.checked){
+            console.log('no',e.target.checked);
+            divElement.setAttribute('data-error',texterror);
+            divElement.setAttribute('data-error-visible',true);
+  
+          }else {
+            divElement.removeAttribute('data-error');
+            divElement.removeAttribute('data-error-visible');
+            console.log('yes',e.target.checked);
+            console.log('div',divElement);
+        }
+        });
+       
+    }
+  },
+
+  checkfieldInputCheckbox: function(fieldId,texterror){
+     // on récupère l'élément  qui nous interesse
+     const inputElement = document.getElementById(fieldId);
+     console.log('check',inputElement.checked);
+     const divElement = inputElement.closest('.formData');
+
+     if(!inputElement.checked) {
+      divElement.setAttribute('data-error',texterror);
+      divElement.setAttribute('data-error-visible',true);
+     }else {
+      divElement.removeAttribute('data-error');
+      divElement.removeAttribute('data-error-visible');
+  }
+
+  }
+
+
+}
+
+const FormSuccess = {
+
+
+  displaymodal: function() {
+    console.log('yes');
 
   }
 }
