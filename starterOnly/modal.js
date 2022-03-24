@@ -36,12 +36,17 @@ const app = {
   init:function() {
     console.log('init');
     form.InitializeEvent();
+    
   }
 
 }
 
 // model  for form
 const form = {
+
+
+  success : true,
+
 
   InitializeEvent: function()  {
 
@@ -53,14 +58,17 @@ const form = {
   handleSubmit: function(event) {
 
 
-    form.checkfield();
 
+    event.preventDefault();
+    form.checkfield();
     for (let attrError of formData){
       if(attrError.getAttribute('data-error')){
-        event.preventDefault();
-      }else {
-       console.log('success');
+        form.success = false;
       }
+
+    }
+    if(form.success){
+      formSuccess.displaymodal();
     }
 
 
@@ -80,8 +88,9 @@ const form = {
     form.checkfieldInputNumber('quantity', "merci de renseigner un nombre positif");
     // champ tournoi
     form.checkfieldInputRadio('input[type=radio]','Vous devez coché un tournoi');
-
+    // champ condition d'utilisation
     form.checkfieldInputCheckbox('checkbox1', 'vous devez acceptez les conditions d\'utilisation');
+
 
   },
 
@@ -98,9 +107,11 @@ const form = {
     if (checkfieldValue == ''){
       divElement.setAttribute('data-error',texterror);
       divElement.setAttribute('data-error-visible',true);
+      form.success = false;
     }else {
       divElement.removeAttribute('data-error');
       divElement.removeAttribute('data-error-visible');
+      form.success = true;
     }
   },
 
@@ -124,9 +135,11 @@ const form = {
     if (inputLength < minlenght || inputValue == ''){
       divElement.setAttribute('data-error',texterror);
       divElement.setAttribute('data-error-visible',true);
+      form.success = false;
     }else {
       divElement.removeAttribute('data-error');
       divElement.removeAttribute('data-error-visible');
+      form.success = true;
     }
 
   },
@@ -147,9 +160,11 @@ const form = {
     if (!pattern.test(inputValue )){
       divElement.setAttribute('data-error',texterror);
       divElement.setAttribute('data-error-visible',true);
+      form.success = false;
     }else {
       divElement.removeAttribute('data-error');
       divElement.removeAttribute('data-error-visible');
+      form.success = true;
     }
 
   },
@@ -178,10 +193,12 @@ const form = {
      if ( inputValue < 0 || isNaN(inputValue)){
        divElement.setAttribute('data-error',texterror);
        divElement.setAttribute('data-error-visible',true);
+       form.success = false;
 
      }else {
        divElement.removeAttribute('data-error');
        divElement.removeAttribute('data-error-visible');
+       form.success = true;
 
      }
 
@@ -190,60 +207,73 @@ const form = {
   checkfieldInputRadio: function(fieldType, texterror)
   {
       let radioElement = document.querySelectorAll(fieldType);
-      console.log(radioElement.length);
-      // const divElement = element.closest('.formData');
-      // let count = 0;
-      // for(let i = 0; i < radioElement.length; i++){
-      //   if(radioElement[i].checked){
-      //     count++;
-      //     return count;
+      //console.log(radioElement.length);
+
+      // compte le nombre d'élément  radio
+      // let countRadioElement = radioElement.length;
+      // let LoactionSelection= false;
+
+
+      // if (countRadioElement > 0 ){
+      //   // parcours le tableau pour chercher si un élément est coché
+      //   for(let i =0;i < countRadioElement;i++){
+      //     const divElement = radioElement[i].closest('.formData');
+      //     if(radioElement[i].checked){
+      //       LoactionSelection = true;
+      //       //texterror ='';
+      //       console.log('ouf', radioElement[i].value);
+      //       divElement.removeAttribute('data-error');
+      //       divElement.removeAttribute('data-error-visible');
+      //       break ;
+      //     }else {
+      //       LoactionSelection = false;
+      //     }
+      //     if(!LoactionSelection){
+      //       divElement.setAttribute('data-error',texterror);
+      //       divElement.setAttribute('data-error-visible',true);
+      //     }
       //   }
-
-      //   //   if( count == 0){
-      //   //     divElement.setAttribute('data-error',texterror);
-      //   //     divElement.setAttribute('data-error-visible',true);
-      //   //   }else {
-      //   //     divElement.removeAttribute('data-error');
-      //   //     divElement.removeAttribute('data-error-visible');
-
-      //   //     console.log('div',divElement);
-      //   // }
       // }
+
 
       for( const element of radioElement){
         // console.log('radio',element.checked);
         const divElement = element.closest('.formData');
-        element.addEventListener('click', function(e){
-          console.log(e.currentTarget.checked);
-          
-          if(!e.target.checked){
-            console.log('no',e.target.checked);
+
+
+          if(!element.checked){
+  
             divElement.setAttribute('data-error',texterror);
             divElement.setAttribute('data-error-visible',true);
+            form.success = false;
+  
   
           }else {
             divElement.removeAttribute('data-error');
             divElement.removeAttribute('data-error-visible');
-            console.log('yes',e.target.checked);
-            console.log('div',divElement);
+            form.success = true;
+            //console.log('div',divElement);
+            break;
         }
-        });
-       
-    }
+        }
+
+
   },
 
   checkfieldInputCheckbox: function(fieldId,texterror){
      // on récupère l'élément  qui nous interesse
      const inputElement = document.getElementById(fieldId);
-     console.log('check',inputElement.checked);
+     //console.log('check',inputElement.checked);
      const divElement = inputElement.closest('.formData');
 
      if(!inputElement.checked) {
       divElement.setAttribute('data-error',texterror);
       divElement.setAttribute('data-error-visible',true);
+      form.success = false;
      }else {
       divElement.removeAttribute('data-error');
       divElement.removeAttribute('data-error-visible');
+      form.success = true;
   }
 
   }
@@ -251,13 +281,31 @@ const form = {
 
 }
 
-const FormSuccess = {
+const formSuccess = {
+
+ 
 
 
   displaymodal: function() {
-    console.log('yes');
+   const modalsuccess = document.querySelector('.bground');
+   modalsuccess.style.display="block";
+   // cache le form afin d'afficher une modal vierge
+   let formElt = modalsuccess.querySelector('.modal-body');
+  formElt.style.display="none";
 
+    // cible tout les champs input et remet les valeurs à zero
+  let inputElement = document.querySelectorAll('input');
+  for(let input of inputElement){
+    input.value='';
+    input.checked= false;
   }
+
+
+   let divElement = modalsuccess.querySelector('.content');
+   console.log(divElement);
+   divElement.style.height="750px";
+
+  },
 }
 
 document.addEventListener('DOMContentLoaded', app.init);
