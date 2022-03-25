@@ -36,7 +36,6 @@ const app = {
   init:function() {
     console.log('init');
     form.InitializeEvent();
-    
   }
 
 }
@@ -189,7 +188,7 @@ const form = {
      // on remonte au parent afin d'afficher le message d'erreur
      const divElement = inputElement.closest('.formData');
 
-     // on vérifie si le champ n'est pas vide et il contient 2 caractères
+     // on vérifie si le champ n'est pas une valeur négative  ou si c'est bien un nombre
      if ( inputValue < 0 || isNaN(inputValue)){
        divElement.setAttribute('data-error',texterror);
        divElement.setAttribute('data-error-visible',true);
@@ -235,19 +234,18 @@ const form = {
       //   }
       // }
 
-
+      // on parcour tout les élements afin de savoir si checked
       for( const element of radioElement){
         // console.log('radio',element.checked);
         const divElement = element.closest('.formData');
 
 
           if(!element.checked){
-  
+
             divElement.setAttribute('data-error',texterror);
             divElement.setAttribute('data-error-visible',true);
             form.success = false;
-  
-  
+
           }else {
             divElement.removeAttribute('data-error');
             divElement.removeAttribute('data-error-visible');
@@ -283,29 +281,82 @@ const form = {
 
 const formSuccess = {
 
- 
 
-
+  // method for open a new modal
   displaymodal: function() {
-   const modalsuccess = document.querySelector('.bground');
-   modalsuccess.style.display="block";
-   // cache le form afin d'afficher une modal vierge
-   let formElt = modalsuccess.querySelector('.modal-body');
-  formElt.style.display="none";
-
-    // cible tout les champs input et remet les valeurs à zero
-  let inputElement = document.querySelectorAll('input');
-  for(let input of inputElement){
-    input.value='';
-    input.checked= false;
-  }
+    const modalsuccess = document.querySelector('.bground');
+    modalsuccess.style.display="block";
+    // cache le form afin d'afficher une modal vierge
+    let formElt = modalsuccess.querySelector('.modal-body');
+    formElt.style.display="none";
 
 
-   let divElement = modalsuccess.querySelector('.content');
-   console.log(divElement);
-   divElement.style.height="750px";
+
+    formSuccess.display(modalsuccess);
 
   },
+
+  // method  for display message success submit
+  display:function (modalElement){
+
+    let divElement = modalElement.querySelector('.content');
+    //console.log(divElement);
+    divElement.classList.add('content--success');
+
+    //create  h2
+    let titleElement = document.createElement('h2');
+    titleElement.innerHTML = "Merci pour<br> votre inscription";
+    titleElement.classList.add("title-success");
+    divElement.appendChild(titleElement);
+
+    // create button
+    let buttonElement = document.createElement('button');
+    buttonElement.classList.add("button-success", "btn-success");
+    buttonElement.textContent="fermer";
+    divElement.appendChild(buttonElement);
+    buttonElement.addEventListener('click',function(){
+
+        modalElement.style.display = "none";
+        // display element of form
+        let formElt = modalElement.querySelector('.modal-body');
+        formElt.style.display = "block";
+
+        // delete all element create
+        divElement.classList.remove('content--success');
+        divElement.removeChild(titleElement);
+        divElement.removeChild(buttonElement);
+
+        // cible tout les champs input et remet les valeurs à zero sauf l'input de type submit
+        let inputElement = document.querySelectorAll('input:not([type="submit"])');
+        for (let input of inputElement) {
+          input.value = '';
+          input.checked = false;
+        }
+    });
+    // buttonElement.addEventListener('click',formSuccess.refreshForm(modalElement,divElement,titleElement,buttonElement));
+
+  },
+
+
+  // refreshForm: (modalElement, divElement, titleElement, buttonElement) => {
+
+  //   console.log('yes');
+
+  //   // modalElement.style.display = "none";
+  //   let formElt = modalElement.querySelector('.modal-body');
+  //   formElt.style.display = "block";
+  //   divElement.classList.remove('content--success');
+  //   divElement.removeChild(titleElement);
+  //   divElement.removeChild(buttonElement);
+  //   // cible tout les champs input et remet les valeurs à zero sauf l'input de type submit
+  //   let inputElement = document.querySelectorAll('input:not([type="submit"])');
+  //   for (let input of inputElement) {
+  //     input.value = '';
+  //     input.checked = false;
+  //   }
+  //   //  location.reload();
+  // }
+
 }
 
 document.addEventListener('DOMContentLoaded', app.init);
