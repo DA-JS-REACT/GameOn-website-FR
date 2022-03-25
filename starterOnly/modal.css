@@ -37,6 +37,8 @@ img {
 .header-logo {
     float: left;
 }
+
+
 .main-navbar {
     float: right;
 }
@@ -66,6 +68,8 @@ img {
 
 .topnav .icon {
   display: none;
+  /* add color*/
+  color: #ff0000;
 }
 
 @media screen and (max-width: 768px) {
@@ -73,6 +77,14 @@ img {
   .topnav a.icon {
     float: right;
     display: block;
+  }
+  .header-logo{
+    padding-left: 20px;
+  }
+  .header-logo img {
+    width: 40%;
+    height: auto;
+    
   }
 }
 
@@ -88,6 +100,7 @@ img {
     display: block;
     text-align: left;
   }
+ 
 }
 
 
@@ -498,6 +511,7 @@ footer {
   margin: 0 20px;
 }
 @media screen and (max-width: 800px) {
+
   .hero-section {
     display: block;
     box-shadow: unset;
@@ -505,7 +519,8 @@ footer {
   .hero-content {
     background: #fff;
     color: #000;
-    padding: 20px;
+    padding:10px 0px;
+    min-width: initial;
   }
   .hero-content::after {
     content: unset;
@@ -514,12 +529,12 @@ footer {
     display: none;
   }
   .hero-headline {
-    font-size: 4.5rem;
-    white-space: normal;
+    font-size: 2.2rem;
+    white-space:normal;
   }
   .hero-text {
-    width: unset;
-    font-size: 1.5rem;
+    width: 100%;
+    font-size: 0.79rem;
   }
   .hero-img img {
     border-radius: 10px;
