@@ -19,6 +19,7 @@ body {
   font-size: 18px;
   max-width: 1300px;
   margin: 0 auto;
+  min-height: 100vh;
 }
 
 p {
@@ -84,7 +85,6 @@ img {
   .header-logo img {
     width: 40%;
     height: auto;
-    
   }
 }
 
@@ -100,7 +100,6 @@ img {
     display: block;
     text-align: left;
   }
- 
 }
 
 
@@ -112,7 +111,25 @@ img {
     display: block;
     margin-top: -15px;
   }
-} 
+}
+
+/** add  breakpoint tablet **/
+@media screen and (min-width: 769px) and (max-width:1125px) {
+  .topnav {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .main-navbar,
+  .header-logo {
+    float: none;
+    align-self: center;
+  }
+  .topnav a {
+    font-size: 18px;
+  }
+
+}
 
 main {
   font-size: 130%;
@@ -513,6 +530,7 @@ footer {
 }
 @media screen and (max-width: 800px) {
 
+
   .btn-submit,
   .btn-success {
     font-size: 0.9rem;
@@ -524,12 +542,10 @@ footer {
   }
   .bground{
     top:8vh;
-    /* height: 95vh; */
   }
   .content{
     margin: 0;
     padding-bottom: 40px;
-  /* height: 95vh; */
   }
   .content--success {
     height: 95vh;
@@ -550,15 +566,6 @@ footer {
     font-size: 14px;
     height: 35px;
   }
-  /* .modal-body > form{
-
-    width:  100%;
-    height: 5px;
-  }
-  .formData {
-    height: 70px;
-    padding: 10px 0;
-  } */
 
   .checkbox-label,
   .checkbox2-label {
@@ -617,6 +624,30 @@ footer {
     text-align: center;
     font-size: 0.8rem;
   }
+  footer {
+    padding-bottom: 10px;
+  }
+}
+
+@media screen and ( min-width:801px) and (max-width:1125px) {
+
+ main {
+   border: 1px solid black;
+ }
+ .hero-section{
+   min-height: 60vh;
+ }
+  .hero-content {
+    min-width: 324px;
+  }
+  .hero-headline {
+    font-size: 4.5rem;
+  }
+  .hero-img img {
+    width: 100%;
+    height: 100%;
+  }
+
 }
 
 @keyframes modalopen {

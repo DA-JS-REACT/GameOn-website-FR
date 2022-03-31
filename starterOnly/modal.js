@@ -60,6 +60,7 @@ const form = {
 
     event.preventDefault();
     form.checkfield();
+    // parcours tout les FormData pour  trouver si il y a une erreur
     for (let attrError of formData){
       if(attrError.getAttribute('data-error')){
         form.success = false;
@@ -76,7 +77,7 @@ const form = {
   checkfield: function(){
 
     // champ prénom
-    form.checkfieldInputText('first', ' Veuillez entrer 2 caractères ou plus pour le champ du prenom.', 2);
+    form.checkfieldInputText('first', ' Veuillez entrer 2 caractères ou plus pour le champ du prénom.', 2);
     // champ nom
     form.checkfieldInputText('last', ' Veuillez entrer 2 caractères ou plus pour le champ du nom.', 2);
     // champ email
@@ -86,7 +87,7 @@ const form = {
     // champ quantity
     form.checkfieldInputNumber('quantity', "merci de renseigner un nombre positif");
     // champ tournoi
-    form.checkfieldInputRadio('input[type=radio]','Vous devez coché un tournoi');
+    form.checkfieldInputRadio('input[type=radio]','Vous devez coché au moins un tournoi');
     // champ condition d'utilisation
     form.checkfieldInputCheckbox('checkbox1', 'vous devez acceptez les conditions d\'utilisation');
 
@@ -103,7 +104,7 @@ const form = {
     const divElement = inputElement.closest('.formData');
 
     // on vérifie si le champ n'est pas vide et il contient 2 caractères
-    if (checkfieldValue == ''){
+    if (checkfieldValue === ''){
       divElement.setAttribute('data-error',texterror);
       divElement.setAttribute('data-error-visible',true);
       form.success = false;
@@ -129,9 +130,9 @@ const form = {
 
     // on remonte au parent afin d'afficher le message d'erreur
     const divElement = inputElement.closest('.formData');
-
+    const isInvalid = inputLength < minlenght || inputValue === '';
     // on vérifie si le champ n'est pas vide et il contient 2 caractères
-    if (inputLength < minlenght || inputValue == ''){
+    if (isInvalid){
       divElement.setAttribute('data-error',texterror);
       divElement.setAttribute('data-error-visible',true);
       form.success = false;
@@ -301,8 +302,8 @@ const formSuccess = {
 
     let divElement = modalElement.querySelector('.content');
     //console.log(divElement);
-    divElement.classList.add('content--success');
-
+    //divElement.classList.add('content--success');
+    divElement.classList.toggle('content--success');
     //create  h2
     let titleElement = document.createElement('h2');
     titleElement.innerHTML = "Merci pour<br> votre inscription";
@@ -314,6 +315,7 @@ const formSuccess = {
     buttonElement.classList.add("button-success", "btn-success");
     buttonElement.textContent="fermer";
     divElement.appendChild(buttonElement);
+
     buttonElement.addEventListener('click',function(){
 
         modalElement.style.display = "none";
@@ -322,7 +324,8 @@ const formSuccess = {
         formElt.style.display = "block";
 
         // delete all element create
-        divElement.classList.remove('content--success');
+            // add toggle ligne 306
+        // divElement.classList.remove('content--success');
         divElement.removeChild(titleElement);
         divElement.removeChild(buttonElement);
 
