@@ -45,11 +45,12 @@ const form = {
 
 
   success : true,
+  formDataValue: [],
 
 
   InitializeEvent: function()  {
 
-    let formElement = document.querySelector('.modal-body form');
+    const formElement = document.querySelector('.modal-body form');
     // console.log(formElement);
     formElement.addEventListener('submit', form.handleSubmit);
   },
@@ -68,6 +69,7 @@ const form = {
 
     }
     if(form.success){
+      console.log(form.formDataValue);
       formSuccess.displaymodal();
     }
 
@@ -83,13 +85,17 @@ const form = {
     // champ email
     form.checkfieldInputEmail('email',' merci de rensiegner une addresse mail valide');
     // champ birthdate
-    form.checkfieldInputBirthdate('birthdate', 'merci de renseigner votre date de naissance');
+    form.checkfieldInputBirthdate('birthdate', 'merci de renseigner une date de naissance valide');
     // champ quantity
     form.checkfieldInputNumber('quantity', "merci de renseigner un nombre positif");
     // champ tournoi
     form.checkfieldInputRadio('input[type=radio]','Vous devez coché au moins un tournoi');
     // champ condition d'utilisation
     form.checkfieldInputCheckbox('checkbox1', 'vous devez acceptez les conditions d\'utilisation');
+
+    // récuperation du dernier checkbox
+    const inputElement = document.getElementById('checkbox2');
+    form.formDataValue.push('event:'+ inputElement.checked);
 
 
   },
@@ -114,23 +120,39 @@ const form = {
       form.success = true;
     }
   },
-
-  checkfieldInputText: function(fieldId,texterror , minlenght)
+  checkIsValid : function(inputElement,texterror,isInvalid,fieldId = '')
   {
-    // on récupère l'élément  qui nous interesse
-    const inputElement = document.getElementById(fieldId);
-
-    // on récupère sa valeur
-    const inputValue = inputElement.value.trim();
-    // console.log(inputValue);
-
-    // on vérifie que cette valeur est correct
-    const inputLength = inputValue.length;
-    // console.log(inputLength);
-
+     // on récupère sa valeur
+    // const checkfieldValue = inputElement.value.trim();
+    let checkfieldValue = inputElement.value.trim();
     // on remonte au parent afin d'afficher le message d'erreur
     const divElement = inputElement.closest('.formData');
-    const isInvalid = inputLength < minlenght || inputValue === '';
+
+    if(fieldId === 'first') {
+
+       // on récupère sa valeur
+      checkfieldValue ='prénom:' + inputElement.value.trim();
+
+    }  else if(fieldId === 'last') {
+
+      checkfieldValue ='nom:' + inputElement.value.trim();
+
+    } else if(fieldId === 'quantity') {
+
+      checkfieldValue = 'tournoi :' + parseInt(inputElement.value);
+
+    } else if (fieldId === 'email') {
+
+      checkfieldValue ='email:' + inputElement.value.trim();
+    } else if (fieldId === 'checkbox1'){
+
+      checkfieldValue ='conditions:' + inputElement.checked;
+    } else if (fieldId === "birthdate") {
+
+      // checkfieldValue =`birthdate:${inputElement.value.trim()}`;
+      checkfieldValue ='birthdate:' + inputElement.value.trim();
+    }
+
     // on vérifie si le champ n'est pas vide et il contient 2 caractères
     if (isInvalid){
       divElement.setAttribute('data-error',texterror);
@@ -139,8 +161,22 @@ const form = {
     }else {
       divElement.removeAttribute('data-error');
       divElement.removeAttribute('data-error-visible');
+      // si la valeur est correct on la rentre de le tableau
+      form.formDataValue.push(checkfieldValue);
       form.success = true;
     }
+  },
+
+  checkfieldInputText: function(fieldId,texterror , minlenght)
+  {
+    // on récupère l'élément  qui nous interesse
+    const inputElement = document.getElementById(fieldId);
+
+    // on vérifie que cette valeur est correct au nombre de caratère
+    const inputLength = inputElement.value.trim().length;
+
+    const isInvalid = inputLength < minlenght || inputElement.value.trim() === '';
+    form.checkIsValid(inputElement,texterror,isInvalid,fieldId);
 
   },
 
@@ -149,23 +185,11 @@ const form = {
     // on récupère l'élément  qui nous interesse
     const inputElement = document.getElementById(fieldId);
 
-    // on récupère sa valeur
-    const inputValue = inputElement.value.trim();
-    // console.log(inputValue);
-
-    // on remonte au parent afin d'afficher le message d'erreur
-    const divElement = inputElement.closest('.formData');
-
+    // condition pour être valide
     let pattern = /^[a-z0-9.-]{2,}@+[a-z0-9.-]{2,}$/;
-    if (!pattern.test(inputValue )){
-      divElement.setAttribute('data-error',texterror);
-      divElement.setAttribute('data-error-visible',true);
-      form.success = false;
-    }else {
-      divElement.removeAttribute('data-error');
-      divElement.removeAttribute('data-error-visible');
-      form.success = true;
-    }
+    isInvalid = !pattern.test(inputElement.value.trim());
+
+    form.checkIsValid(inputElement,texterror,isInvalid,fieldId);
 
   },
 
@@ -173,8 +197,33 @@ const form = {
   {
      // on récupère l'élément  qui nous interesse
      const inputElement = document.getElementById(fieldId);
+    //console.log(inputElement.valueAsDate);
+    // on récupère la date saisie avec new date pou pouvoir la décomposer
+    const dateValue = new Date(inputElement.value);
+    // le jour
+    const dayValue = dateValue.getDate();
 
-     form.checkNotEmpty(inputElement,texterror);
+    // le mois  getMonth récupère de 0 à 11 donc ajouter 1 pour le mois
+    const monthValue = dateValue.getMonth() + 1;
+
+    //l'année
+    const yearValue = dateValue.getFullYear();
+
+    //console.log('mois',monthValue , 'année:',yearValue, 'jour:', dayValue);
+    //récupére la date du jour
+    const localDate = Date.now();
+    const today = new Date(localDate);
+    const dayToday = today.getDate();
+    const monthToday = today.getMonth() + 1;
+    const yearToday = today.getFullYear();
+     if (dayValue === dayToday && monthValue === monthToday){
+       alert(' Joyeux annivarsaire !!!!');
+     }
+
+    // condition pour être valide
+     isInvalid = yearValue === yearToday || (yearToday - yearValue) > 100 || yearValue > yearToday || (yearToday - yearValue) < 18;
+
+     form.checkIsValid(inputElement,texterror,isInvalid);
   },
 
   checkfieldInputNumber :function(fieldId,texterror)
@@ -184,29 +233,16 @@ const form = {
 
      // on récupère sa valeur
      const inputValue = parseInt( inputElement.value);
-     //console.log(inputValue);
 
-     // on remonte au parent afin d'afficher le message d'erreur
-     const divElement = inputElement.closest('.formData');
-
-     // on vérifie si le champ n'est pas une valeur négative  ou si c'est bien un nombre
-     if ( inputValue < 0 || isNaN(inputValue)){
-       divElement.setAttribute('data-error',texterror);
-       divElement.setAttribute('data-error-visible',true);
-       form.success = false;
-
-     }else {
-       divElement.removeAttribute('data-error');
-       divElement.removeAttribute('data-error-visible');
-       form.success = true;
-
-     }
+     // condition pour être valide
+     isInvalid = inputValue < 0 || isNaN(inputValue);
+     form.checkIsValid(inputElement,texterror,isInvalid,fieldId);
 
   },
 
   checkfieldInputRadio: function(fieldType, texterror)
   {
-      let radioElement = document.querySelectorAll(fieldType);
+      const radioElement = document.querySelectorAll(fieldType);
       //console.log(radioElement.length);
 
       // compte le nombre d'élément  radio
@@ -251,6 +287,7 @@ const form = {
             divElement.removeAttribute('data-error');
             divElement.removeAttribute('data-error-visible');
             form.success = true;
+            form.formDataValue.push(element.value + ',check:'+ element.checked);
             //console.log('div',divElement);
             break;
         }
@@ -262,18 +299,22 @@ const form = {
   checkfieldInputCheckbox: function(fieldId,texterror){
      // on récupère l'élément  qui nous interesse
      const inputElement = document.getElementById(fieldId);
-     //console.log('check',inputElement.checked);
-     const divElement = inputElement.closest('.formData');
 
-     if(!inputElement.checked) {
-      divElement.setAttribute('data-error',texterror);
-      divElement.setAttribute('data-error-visible',true);
-      form.success = false;
-     }else {
-      divElement.removeAttribute('data-error');
-      divElement.removeAttribute('data-error-visible');
-      form.success = true;
-  }
+      // condition pour être valide
+      isInvalid = !inputElement.checked;
+      form.checkIsValid(inputElement,texterror,isInvalid ,fieldId);
+     //console.log('check',inputElement.checked);
+  //    const divElement = inputElement.closest('.formData');
+
+  //    if(!inputElement.checked) {
+  //     divElement.setAttribute('data-error',texterror);
+  //     divElement.setAttribute('data-error-visible',true);
+  //     form.success = false;
+  //    }else {
+  //     divElement.removeAttribute('data-error');
+  //     divElement.removeAttribute('data-error-visible');
+  //     form.success = true;
+  //  }
 
   }
 
@@ -288,7 +329,7 @@ const formSuccess = {
     const modalsuccess = document.querySelector('.bground');
     modalsuccess.style.display="block";
     // cache le form afin d'afficher une modal vierge
-    let formElt = modalsuccess.querySelector('.modal-body');
+    const formElt = modalsuccess.querySelector('.modal-body');
     formElt.style.display="none";
 
 
@@ -300,18 +341,18 @@ const formSuccess = {
   // method  for display message success submit
   display:function (modalElement){
 
-    let divElement = modalElement.querySelector('.content');
+    const divElement = modalElement.querySelector('.content');
     //console.log(divElement);
     //divElement.classList.add('content--success');
     divElement.classList.toggle('content--success');
     //create  h2
-    let titleElement = document.createElement('h2');
+    const titleElement = document.createElement('h2');
     titleElement.innerHTML = "Merci pour<br> votre inscription";
     titleElement.classList.add("title-success");
     divElement.appendChild(titleElement);
 
     // create button
-    let buttonElement = document.createElement('button');
+    const buttonElement = document.createElement('button');
     buttonElement.classList.add("button-success", "btn-success");
     buttonElement.textContent="fermer";
     divElement.appendChild(buttonElement);
@@ -320,7 +361,7 @@ const formSuccess = {
 
         modalElement.style.display = "none";
         // display element of form
-        let formElt = modalElement.querySelector('.modal-body');
+        const formElt = modalElement.querySelector('.modal-body');
         formElt.style.display = "block";
 
         // delete all element create
@@ -330,11 +371,13 @@ const formSuccess = {
         divElement.removeChild(buttonElement);
 
         // cible tout les champs input et remet les valeurs à zero sauf l'input de type submit
-        let inputElement = document.querySelectorAll('input:not([type="submit"])');
+        const inputElement = document.querySelectorAll('input:not([type="submit"])');
         for (let input of inputElement) {
           input.value = '';
           input.checked = false;
         }
+        // vide les données stockés
+        // form.formDataValue = [];
     });
     // buttonElement.addEventListener('click',formSuccess.refreshForm(modalElement,divElement,titleElement,buttonElement));
 
