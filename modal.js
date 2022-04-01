@@ -95,7 +95,10 @@ const form = {
 
     // récuperation du dernier checkbox
     const inputElement = document.getElementById('checkbox2');
-    form.formDataValue.push('event:'+ inputElement.checked);
+    if(form.success){
+      form.formDataValue.push('event:'+ inputElement.checked);
+    }
+
 
 
   },
@@ -128,30 +131,7 @@ const form = {
     // on remonte au parent afin d'afficher le message d'erreur
     const divElement = inputElement.closest('.formData');
 
-    if(fieldId === 'first') {
 
-       // on récupère sa valeur
-      checkfieldValue ='prénom:' + inputElement.value.trim();
-
-    }  else if(fieldId === 'last') {
-
-      checkfieldValue ='nom:' + inputElement.value.trim();
-
-    } else if(fieldId === 'quantity') {
-
-      checkfieldValue = 'tournoi :' + parseInt(inputElement.value);
-
-    } else if (fieldId === 'email') {
-
-      checkfieldValue ='email:' + inputElement.value.trim();
-    } else if (fieldId === 'checkbox1'){
-
-      checkfieldValue ='conditions:' + inputElement.checked;
-    } else if (fieldId === "birthdate") {
-
-      // checkfieldValue =`birthdate:${inputElement.value.trim()}`;
-      checkfieldValue ='birthdate:' + inputElement.value.trim();
-    }
 
     // on vérifie si le champ n'est pas vide et il contient 2 caractères
     if (isInvalid){
@@ -162,8 +142,41 @@ const form = {
       divElement.removeAttribute('data-error');
       divElement.removeAttribute('data-error-visible');
       // si la valeur est correct on la rentre de le tableau
-      form.formDataValue.push(checkfieldValue);
       form.success = true;
+    }
+
+    if (form.success){
+      if(fieldId === 'first') {
+
+          // on récupère sa valeur
+        checkfieldValue ='prénom:' + inputElement.value.trim();
+        form.formDataValue.push(checkfieldValue);
+
+      }  else if(fieldId === 'last') {
+
+        checkfieldValue ='nom:' + inputElement.value.trim();
+        form.formDataValue.push(checkfieldValue);
+
+      } else if(fieldId === 'quantity') {
+
+        checkfieldValue = 'tournoi :' + parseInt(inputElement.value);
+        form.formDataValue.push(checkfieldValue);
+
+      } else if (fieldId === 'email') {
+
+        checkfieldValue ='email:' + inputElement.value.trim();
+        form.formDataValue.push(checkfieldValue);
+      } else if (fieldId === 'checkbox1'){
+
+        checkfieldValue ='conditions:' + inputElement.checked;
+        form.formDataValue.push(checkfieldValue);
+      } else if (fieldId === "birthdate") {
+
+        // checkfieldValue =`birthdate:${inputElement.value.trim()}`;
+        checkfieldValue ='birthdate:' + inputElement.value.trim();
+        form.formDataValue.push(checkfieldValue);
+      }
+
     }
   },
 
@@ -223,7 +236,7 @@ const form = {
     // condition pour être valide
      isInvalid = yearValue === yearToday || (yearToday - yearValue) > 100 || yearValue > yearToday || (yearToday - yearValue) < 18;
 
-     form.checkIsValid(inputElement,texterror,isInvalid);
+     form.checkIsValid(inputElement,texterror,isInvalid,fieldId);
   },
 
   checkfieldInputNumber :function(fieldId,texterror)
@@ -377,7 +390,7 @@ const formSuccess = {
           input.checked = false;
         }
         // vide les données stockés
-        // form.formDataValue = [];
+        form.formDataValue = [];
     });
     // buttonElement.addEventListener('click',formSuccess.refreshForm(modalElement,divElement,titleElement,buttonElement));
 
