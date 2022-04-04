@@ -68,8 +68,10 @@ const form = {
       }
 
     }
+    // avec Set un nouveau tableau est crééer avec des valeurs uniques
+    let Data = [new Set(form.formDataValue)];
     if(form.success){
-      console.log(form.formDataValue);
+      console.log(Data);
       formSuccess.displaymodal();
     }
 
@@ -89,7 +91,7 @@ const form = {
     // champ quantity
     form.checkfieldInputNumber('quantity', "merci de renseigner un nombre positif");
     // champ tournoi
-    form.checkfieldInputRadio('input[type=radio]','Vous devez coché au moins un tournoi');
+    form.checkfieldInputRadio('input[type=radio]','Vous devez coché  un tournoi');
     // champ condition d'utilisation
     form.checkfieldInputCheckbox('checkbox1', 'vous devez acceptez les conditions d\'utilisation');
 
@@ -132,8 +134,6 @@ const form = {
     const divElement = inputElement.closest('.formData');
 
 
-
-    // on vérifie si le champ n'est pas vide et il contient 2 caractères
     if (isInvalid){
       divElement.setAttribute('data-error',texterror);
       divElement.setAttribute('data-error-visible',true);
@@ -142,42 +142,37 @@ const form = {
       divElement.removeAttribute('data-error');
       divElement.removeAttribute('data-error-visible');
       // si la valeur est correct on la rentre de le tableau
+      switch (fieldId) {
+        case 'first':
+          checkfieldValue ='prénom:' + inputElement.value.trim();
+          form.formDataValue.push(checkfieldValue);
+          break;
+        case 'last':
+          checkfieldValue ='nom:' + inputElement.value.trim();
+          form.formDataValue.push(checkfieldValue);
+          break;
+        case 'quantity':
+          checkfieldValue = 'tournoi :' + parseInt(inputElement.value);
+          form.formDataValue.push(checkfieldValue);
+          break;
+        case 'email':
+          checkfieldValue ='email:' + inputElement.value.trim();
+          form.formDataValue.push(checkfieldValue);
+          break;
+        case 'checkbox1':
+          checkfieldValue ='conditions:' + inputElement.checked;
+          form.formDataValue.push(checkfieldValue);
+          break;
+        case 'birthdate':
+          checkfieldValue ='birthdate:' + inputElement.value;
+          form.formDataValue.push(checkfieldValue);
+          break;
+        default:
+          null;
+      }
       form.success = true;
     }
 
-    if (form.success){
-      if(fieldId === 'first') {
-
-          // on récupère sa valeur
-        checkfieldValue ='prénom:' + inputElement.value.trim();
-        form.formDataValue.push(checkfieldValue);
-
-      }  else if(fieldId === 'last') {
-
-        checkfieldValue ='nom:' + inputElement.value.trim();
-        form.formDataValue.push(checkfieldValue);
-
-      } else if(fieldId === 'quantity') {
-
-        checkfieldValue = 'tournoi :' + parseInt(inputElement.value);
-        form.formDataValue.push(checkfieldValue);
-
-      } else if (fieldId === 'email') {
-
-        checkfieldValue ='email:' + inputElement.value.trim();
-        form.formDataValue.push(checkfieldValue);
-      } else if (fieldId === 'checkbox1'){
-
-        checkfieldValue ='conditions:' + inputElement.checked;
-        form.formDataValue.push(checkfieldValue);
-      } else if (fieldId === "birthdate") {
-
-        // checkfieldValue =`birthdate:${inputElement.value.trim()}`;
-        checkfieldValue ='birthdate:' + inputElement.value.trim();
-        form.formDataValue.push(checkfieldValue);
-      }
-
-    }
   },
 
   checkfieldInputText: function(fieldId,texterror , minlenght)
@@ -234,7 +229,13 @@ const form = {
      }
 
     // condition pour être valide
-     isInvalid = yearValue === yearToday || (yearToday - yearValue) > 100 || yearValue > yearToday || (yearToday - yearValue) < 18;
+     isInvalid = yearValue === yearToday || (yearToday - yearValue) > 100 || yearValue > yearToday || (yearToday - yearValue) < 18 || inputElement.value ==="";
+
+     if ((yearToday - yearValue) < 18){
+       texterror = " vous devez être majeur";
+     } else if ((yearToday - yearValue) > 100 ){
+      texterror = " vous devez être trop vieux ";
+     }
 
      form.checkIsValid(inputElement,texterror,isInvalid,fieldId);
   },
@@ -256,12 +257,12 @@ const form = {
   checkfieldInputRadio: function(fieldType, texterror)
   {
       const radioElement = document.querySelectorAll(fieldType);
-      //console.log(radioElement.length);
 
+      // FIXME: other loop
+      //console.log(radioElement.length);
       // compte le nombre d'élément  radio
       // let countRadioElement = radioElement.length;
       // let LoactionSelection= false;
-
 
       // if (countRadioElement > 0 ){
       //   // parcours le tableau pour chercher si un élément est coché
@@ -316,19 +317,6 @@ const form = {
       // condition pour être valide
       isInvalid = !inputElement.checked;
       form.checkIsValid(inputElement,texterror,isInvalid ,fieldId);
-     //console.log('check',inputElement.checked);
-  //    const divElement = inputElement.closest('.formData');
-
-  //    if(!inputElement.checked) {
-  //     divElement.setAttribute('data-error',texterror);
-  //     divElement.setAttribute('data-error-visible',true);
-  //     form.success = false;
-  //    }else {
-  //     divElement.removeAttribute('data-error');
-  //     divElement.removeAttribute('data-error-visible');
-  //     form.success = true;
-  //  }
-
   }
 
 
@@ -344,7 +332,6 @@ const formSuccess = {
     // cache le form afin d'afficher une modal vierge
     const formElt = modalsuccess.querySelector('.modal-body');
     formElt.style.display="none";
-
 
 
     formSuccess.display(modalsuccess);
@@ -391,30 +378,13 @@ const formSuccess = {
         }
         // vide les données stockés
         form.formDataValue = [];
+        // rafraichis  la page auto
+        //  location.reload();
     });
-    // buttonElement.addEventListener('click',formSuccess.refreshForm(modalElement,divElement,titleElement,buttonElement));
 
   },
 
 
-  // refreshForm: (modalElement, divElement, titleElement, buttonElement) => {
-
-  //   console.log('yes');
-
-  //   // modalElement.style.display = "none";
-  //   let formElt = modalElement.querySelector('.modal-body');
-  //   formElt.style.display = "block";
-  //   divElement.classList.remove('content--success');
-  //   divElement.removeChild(titleElement);
-  //   divElement.removeChild(buttonElement);
-  //   // cible tout les champs input et remet les valeurs à zero sauf l'input de type submit
-  //   let inputElement = document.querySelectorAll('input:not([type="submit"])');
-  //   for (let input of inputElement) {
-  //     input.value = '';
-  //     input.checked = false;
-  //   }
-  //   //  location.reload();
-  // }
 
 }
 
