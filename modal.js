@@ -60,7 +60,9 @@ const form = {
 
 
     event.preventDefault();
+    form.formDataValue =[];
     form.checkfield();
+   
     // parcours tout les FormData pour  trouver si il y a une erreur
     for (let attrError of formData){
       if(attrError.getAttribute('data-error')){
@@ -69,9 +71,9 @@ const form = {
 
     }
     // avec Set un nouveau tableau est crééer avec des valeurs uniques
-    let Data = [new Set(form.formDataValue)];
+    // let Data = [new Set(form.formDataValue)];
     if(form.success){
-      console.log(Data);
+      console.log(form.formDataValue);
       formSuccess.displaymodal();
     }
 
