@@ -87,6 +87,7 @@ img {
   }
   .header-logo{
     padding-left: 20px;
+    padding-top:10px;
   }
   .header-logo img {
     width: 50%;
@@ -638,7 +639,10 @@ footer {
 @media screen and ( min-width:801px) and (max-width:1125px) {
 
  main {
-   margin-top: 50px;
+   margin-top: 10px;
+ }
+ .main-navbar{
+   margin-top: 30px;
  }
  .hero-section{
    min-height: 60vh;

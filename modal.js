@@ -60,9 +60,10 @@ const form = {
 
 
     event.preventDefault();
+    // refresh tab for unique value
     form.formDataValue =[];
     form.checkfield();
-   
+
     // parcours tout les FormData pour  trouver si il y a une erreur
     for (let attrError of formData){
       if(attrError.getAttribute('data-error')){
@@ -103,30 +104,9 @@ const form = {
       form.formDataValue.push('event:'+ inputElement.checked);
     }
 
-
-
   },
 
 
-
-  checkNotEmpty : function(inputElement,texterror)
-  {
-     // on récupère sa valeur
-    const checkfieldValue = inputElement.value.trim();
-    // on remonte au parent afin d'afficher le message d'erreur
-    const divElement = inputElement.closest('.formData');
-
-    // on vérifie si le champ n'est pas vide et il contient 2 caractères
-    if (checkfieldValue === ''){
-      divElement.setAttribute('data-error',texterror);
-      divElement.setAttribute('data-error-visible',true);
-      form.success = false;
-    }else {
-      divElement.removeAttribute('data-error');
-      divElement.removeAttribute('data-error-visible');
-      form.success = true;
-    }
-  },
   checkIsValid : function(inputElement,texterror,isInvalid,fieldId = '')
   {
      // on récupère sa valeur
@@ -260,33 +240,6 @@ const form = {
   {
       const radioElement = document.querySelectorAll(fieldType);
 
-      // FIXME: other loop
-      //console.log(radioElement.length);
-      // compte le nombre d'élément  radio
-      // let countRadioElement = radioElement.length;
-      // let LoactionSelection= false;
-
-      // if (countRadioElement > 0 ){
-      //   // parcours le tableau pour chercher si un élément est coché
-      //   for(let i =0;i < countRadioElement;i++){
-      //     const divElement = radioElement[i].closest('.formData');
-      //     if(radioElement[i].checked){
-      //       LoactionSelection = true;
-      //       //texterror ='';
-      //       console.log('ouf', radioElement[i].value);
-      //       divElement.removeAttribute('data-error');
-      //       divElement.removeAttribute('data-error-visible');
-      //       break ;
-      //     }else {
-      //       LoactionSelection = false;
-      //     }
-      //     if(!LoactionSelection){
-      //       divElement.setAttribute('data-error',texterror);
-      //       divElement.setAttribute('data-error-visible',true);
-      //     }
-      //   }
-      // }
-
       // on parcour tout les élements afin de savoir si checked
       for( const element of radioElement){
         // console.log('radio',element.checked);
@@ -304,7 +257,6 @@ const form = {
             divElement.removeAttribute('data-error-visible');
             form.success = true;
             form.formDataValue.push(element.value + ',check:'+ element.checked);
-            //console.log('div',divElement);
             break;
         }
         }
@@ -344,7 +296,7 @@ const formSuccess = {
   display:function (modalElement){
 
     const divElement = modalElement.querySelector('.content');
-    //console.log(divElement);
+
     //divElement.classList.add('content--success');
     divElement.classList.toggle('content--success');
     //create  h2
